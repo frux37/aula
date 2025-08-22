@@ -4,6 +4,8 @@
  */
 package view;
 
+import java.util.ArrayList;
+import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
 import model.ItemCompra;
 
@@ -12,12 +14,14 @@ import model.ItemCompra;
  * @author vanessalagomachado
  */
 public class ListaItensJF extends javax.swing.JFrame {
+    ArrayList<ItemCompra> listaItens; 
 
     /**
      * Creates new form ListaItensJF
      */
     public ListaItensJF() {
         initComponents();
+        listaItens = new ArrayList<>();
     }
 
     /**
@@ -34,6 +38,9 @@ public class ListaItensJF extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         lstProd = new javax.swing.JList<>();
         btnAddItem = new javax.swing.JButton();
+        btnEditar = new javax.swing.JButton();
+        btnRemover = new javax.swing.JButton();
+        btnInfo = new javax.swing.JButton();
 
         jLabel1.setText("jLabel1");
 
@@ -50,6 +57,27 @@ public class ListaItensJF extends javax.swing.JFrame {
             }
         });
 
+        btnEditar.setText("Editar");
+        btnEditar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEditarActionPerformed(evt);
+            }
+        });
+
+        btnRemover.setText("Remover");
+        btnRemover.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRemoverActionPerformed(evt);
+            }
+        });
+
+        btnInfo.setText("Mais Informações");
+        btnInfo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnInfoActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -59,8 +87,15 @@ public class ListaItensJF extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(lblTituto)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 381, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnAddItem))
-                .addContainerGap(37, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(btnAddItem)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnEditar)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnRemover)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnInfo)))
+                .addContainerGap(19, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -70,7 +105,11 @@ public class ListaItensJF extends javax.swing.JFrame {
                 .addGap(26, 26, 26)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(28, 28, 28)
-                .addComponent(btnAddItem)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnAddItem)
+                    .addComponent(btnEditar)
+                    .addComponent(btnRemover)
+                    .addComponent(btnInfo))
                 .addContainerGap(107, Short.MAX_VALUE))
         );
 
@@ -84,8 +123,51 @@ public class ListaItensJF extends javax.swing.JFrame {
         ItemCompra itemCadastrado = telaCadastro.getItem();
         telaCadastro.dispose();
         
-        JOptionPane.showMessageDialog(null, "Produto Cadastrado: "+itemCadastrado);
+        //JOptionPane.showMessageDialog(null, "Produto Cadastrado: "+itemCadastrado);
+        
+        listaItens.add(itemCadastrado);
+        
+        loadItensInList();
     }//GEN-LAST:event_btnAddItemActionPerformed
+
+    private void btnEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditarActionPerformed
+        ItemCompra itemSelecionado = lstProd.getSelectedValue();
+        
+        if(itemSelecionado != null) {
+            CadastroJFBuider telaCadastro = new CadastroJFBuider(this, true);
+            telaCadastro.setItem(itemSelecionado);
+            telaCadastro.setVisible(true);
+            
+            loadItensInList();
+        } else {
+            JOptionPane.showMessageDialog(rootPane, "Selecione um item", "Produto não selecionado", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_btnEditarActionPerformed
+
+    private void btnInfoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInfoActionPerformed
+        ItemCompra itemSelecionado = lstProd.getSelectedValue();
+        
+        if(itemSelecionado != null) {
+            JOptionPane.showMessageDialog(rootPane, itemSelecionado.exibirDados());
+        } else {
+            JOptionPane.showMessageDialog(rootPane, "Selecione um item", "Produto não selecionado", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_btnInfoActionPerformed
+
+    private void btnRemoverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemoverActionPerformed
+        ItemCompra itemSelecionado = lstProd.getSelectedValue();
+        
+        if(itemSelecionado != null) {
+            int remover = JOptionPane.showConfirmDialog(rootPane, "Tem certeza que deseja remover o item "+itemSelecionado.getDescricaoItem()+"?");
+            
+            if(remover == JOptionPane.YES_OPTION) {
+                listaItens.remove(itemSelecionado);
+                loadItensInList();
+            }
+        } else {
+            JOptionPane.showMessageDialog(rootPane, "Selecione um item", "Produto não selecionado", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_btnRemoverActionPerformed
 
     /**
      * @param args the command line arguments
@@ -121,9 +203,23 @@ public class ListaItensJF extends javax.swing.JFrame {
             }
         });
     }
+    
+    public void loadItensInList(){
+        DefaultListModel modeloLista = new DefaultListModel();
+        modeloLista.removeAllElements();
+        
+        for(ItemCompra item: listaItens) {
+            modeloLista.addElement(item);
+        }
+        
+        lstProd.setModel(modeloLista);
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAddItem;
+    private javax.swing.JButton btnEditar;
+    private javax.swing.JButton btnInfo;
+    private javax.swing.JButton btnRemover;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lblTituto;

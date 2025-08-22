@@ -42,7 +42,11 @@ public class ItemCompra {
         return descricaoItem+ " - Quantidade: "+quantidade;
     }
     
-    
-    
-    
+    public String exibirDados() {
+        String aux = "Produto cadastrado:\n ";
+        aux += "Descrição do item" + descricaoItem+ "\n";
+        aux += "Quantidade: " +quantidade+ "\n";
+        aux += comprado == true? "Item já comprado" : "Não comprado";
+        return aux;
+    }
 }

@@ -154,5 +154,8 @@ public class CadastroJFBuider extends javax.swing.JDialog {
 
     public void setItem(ItemCompra item) {
         this.item = item;
+        txtProduto.setText(item.getDescricaoItem());
+        txtQuantidade.setText(""+item.getQuantidade());
+        //txtQuantidade.setText(String.valueOf(item.getQuantidade()));
     }
 }
